@@ -1,0 +1,1861 @@
+<!DOCTYPE html>
+<div class="container">
+    <div class="faixacep">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+        <div id="titulocep"><h3>Confira se Atendemos em sua Região</h3></div>
+        <input type="text" maxlength="8" onkeypress='return event.charCode >= 48 && event.charCode <= 57' name="cep" id="cep" placeholder="Informe seu CEP" />
+        <input type="button" id="VerificarCEP" value="Verificar" />
+        <div class="alert success">Entregamos em sua região!</div>
+        <div class="alert erro">CEP Inválido</div>
+        <div class="alert infoe">Lamentamos, não entregamos em sua região!</div>
+    </div>    
+</div>
+
+<style>
+
+@media (min-width: 768px){    
+    .alert {
+       padding: 6px;
+       color: white;
+       margin-bottom: 0px;
+       display: none;
+       margin-left: 5px;
+       border-radius: 5px;
+    }
+
+    .erro {
+       background-color: black;
+    }
+
+   .success {
+       background-color: green;
+    }
+
+   .infoe {
+       background-color: red;
+    }
+
+    .faixacep{
+        display: flex;
+        position: static;
+        flex-direction: row;
+    }
+
+    input#cep{
+        background-color: white;
+        text-align: center;
+        height: 35px;
+        margin-left: -10px;
+    }
+
+    input#VerificarCEP{
+        padding: 0.500rem 0rem;
+        font-family: var(--font_family);
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--color_primary_text) !important;
+        background-color: var(--color_primary);
+        border-radius: 5px;
+        transition: ease-out 0.2s;
+        max-width: 100px;
+        width: 100%;
+        margin-left: 5px;
+        height: 35px;
+        font-weight: 600;
+        text-align: center;
+        text-transform: uppercase;
+        cursor: pointer;
+    }
+
+    div#titulocep{    
+        width: 31%;
+        margin-left: 6%;
+        text-align: center;
+    }
+}
+
+@media (max-width: 550px){
+    .alert {
+       padding: 6px;
+       color: white;
+       margin-bottom: 0px;
+       display: none;
+       border-radius: 5px;
+       width: 100%;
+    }
+
+    .erro {
+       background-color: black;
+       text-align: center;
+    }
+
+   .success {
+       background-color: green;
+       text-align: center;
+    }
+
+   .infoe {
+       background-color: red;
+       text-align: center;
+    }
+
+    .faixacep{
+
+    }
+
+    input#cep{
+        background-color: white;
+        text-align: center;
+        height: 35px;
+        margin-left: 14%;
+        margin-bottom: 10px;
+        width: 45%;
+    }
+
+    input#VerificarCEP{
+        padding: 0.500rem 0rem;
+        font-family: var(--font_family);
+        font-size: 0.775rem;
+        font-weight: 500;
+        color: var(--color_primary_text) !important;
+        background-color: var(--color_primary);
+        border-radius: 5px;
+        transition: ease-out 0.2s;
+        max-width: 100px;
+        width: 100%;
+        margin-left: 5px;
+        height: 35px;
+        font-weight: 600;
+        text-align: center;
+        text-transform: uppercase;
+        cursor: pointer;
+    }
+
+    div#titulocep{    
+        width: 100%;
+        text-align: center;
+        margin-bottom: 10px;
+        margin-top: 2px;
+    }
+    
+}
+    
+</style>
+
+<script>
+    
+const abrange = [
+    
+  // RECIFE
+  {
+    inicio: 50000,
+    fim: 52999,
+    cidade: 'Recife'
+  },
+  // PAULISTA
+  {
+    inicio: 53400,
+    fim: 53499,
+    cidade: 'Paulista'
+  },
+  // OLINDA
+  {
+    inicio: 53000,
+    fim: 53399,
+    cidade: 'Olinda'
+  },
+  // ABREU E LIMA
+  {
+    inicio: 53500,
+    fim: 53599,
+    cidade: 'Abreu e Lima'
+  },
+  // IGARASSU
+  {
+    inicio: 53600,
+    fim: 53689,
+    cidade: 'Igarassu'
+  },
+  // ARAÇOIABA
+  {
+    inicio: 53690,
+    fim: 53699,
+    cidade: 'Araçoiaba'
+  },
+  // ITAPISSUMA
+  {
+    inicio: 53700,
+    fim: 53899,
+    cidade: 'Itapissuma'
+  },
+  // ILHA DE ITAMARACA
+  {
+    inicio: 53900,
+    fim: 53989,
+    cidade: 'Ilha de Itamaraca'
+  },
+  // JABOTÃO DOS GUARARAPES
+  {
+    inicio: 54000,
+    fim: 54499,
+    cidade: 'Jaboatão dos Guararapes'
+  },
+  // CABO DE SANTO AGOSTINHO
+  {
+    inicio: 54500,
+    fim: 54599,
+    cidade: 'Cabo de Santo Agostinho'
+  },
+  // SÃO LOURENÇO DA MATA
+  {
+    inicio: 54700,
+    fim: 54749,
+    cidade: 'São Lourenço da Mata'
+  },
+  // CAMARAGIBE
+  {
+    inicio: 54750,
+    fim: 54799,
+    cidade: 'Camaragibe'
+  },
+  // CARUARU
+  {
+    inicio: 55000,
+    fim: 55119,
+    cidade: 'Caruaru'
+  },
+  // RIACHO DAS ALMAS
+  {
+    inicio: 55120,
+    fim: 55124,
+    cidade: 'Riacho das Almas'
+  },
+  // TORITAMA
+  {
+    inicio: 55125,
+    fim: 55129,
+    cidade: 'Toritama'
+  },
+  // SÃO CAETANO
+  {
+    inicio: 55130,
+    fim: 55139,
+    cidade: 'São Caetano'
+  },
+  // TACAIMBO
+  {
+    inicio: 55140,
+    fim: 55149,
+    cidade: 'Tacaimbo'
+  },
+  // BELO JARDIM
+  {
+    inicio: 55150,
+    fim: 55169,
+    cidade: 'Belo Jardim'
+  },
+  // BREJO DA MADRE DE DEUS
+  {
+    inicio: 55170,
+    fim: 55179,
+    cidade: 'Brejo da Madre de Deus'
+  },
+  // SANTA CRUZ DO CAPIBARIBE
+  {
+    inicio: 55190,
+    fim: 55199,
+    cidade: 'Santa Cruz do Capibaribe'
+  },
+  // PESQUEIRA
+  {
+    inicio: 55200,
+    fim: 55239,
+    cidade: 'Pesqueira'
+  },
+  // POÇÃO
+  {
+    inicio: 55240,
+    fim: 55249,
+    cidade: 'Poção'
+  },
+  // SANHARO
+  {
+    inicio: 55250,
+    fim: 55259,
+    cidade: 'Sanharo'
+  },
+  // ALAGOINHA
+  {
+    inicio: 55260,
+    fim: 55269,
+    cidade: 'Alagoinha'
+  },
+  // VENTUROSA
+  {
+    inicio: 55270,
+    fim: 55279,
+    cidade: 'Venturosa'
+  },
+  // PEDRA
+  {
+    inicio: 55280,
+    fim: 55289,
+    cidade: 'Pedra'
+  },
+  // GARANHUNS
+  {
+    inicio: 55290,
+    fim: 55304,
+    cidade: 'Garanhuns'
+  },
+  // TEREZINHA
+  {
+    inicio: 55305,
+    fim: 55309,
+    cidade: 'Terezinha'
+  },
+  // PALMEIRINA
+  {
+    inicio: 55310,
+    fim: 55314,
+    cidade: 'Palmeirina'
+  },
+  // CORRENTES
+  {
+    inicio: 55315,
+    fim: 55319,
+    cidade: 'Correntes'
+  },
+  // LAGOA DO OURO
+  {
+    inicio: 55320,
+    fim: 55324,
+    cidade: 'Lagoa do Ouro'
+  },
+  // BREJÃO
+  {
+    inicio: 55325,
+    fim: 55329,
+    cidade: 'Brejão'
+  },
+  // BOM CONSELHO
+  {
+    inicio: 55330,
+    fim: 55339,
+    cidade: 'Bom Conselho'
+  },
+  // ÁGUAS BELAS
+  {
+    inicio: 55340,
+    fim: 55344,
+    cidade: 'Águas Belas'
+  },
+  // CAETES
+  {
+    inicio: 55360,
+    fim: 55364,
+    cidade: 'Caetes'
+  },
+  // CAPOEIRAS
+  {
+    inicio: 55365,
+    fim: 55369,
+    cidade: 'Capoeiras'
+  },
+  // SÃO BENTO DO UNA
+  {
+    inicio: 55370,
+    fim: 55374,
+    cidade: 'São Bento do Una'
+  },
+  // CALCADO
+  {
+    inicio: 55375,
+    fim: 55379,
+    cidade: 'Calcado'
+  },
+  // CACHOEIRINHA
+  {
+    inicio: 55380,
+    fim: 55384,
+    cidade: 'Cachoeirinha'
+  },
+  // LAJEDO
+  {
+    inicio: 55385,
+    fim: 55389,
+    cidade: 'Lajedo'
+  },
+  // IBIRAJUBA
+  {
+    inicio: 55390,
+    fim: 55394,
+    cidade: 'Lajedo'
+  },
+  // JUPI
+  {
+    inicio: 55395,
+    fim: 55397,
+    cidade: 'Jupi'
+  },
+  // JUCATI
+  {
+    inicio: 55398,
+    fim: 55399,
+    cidade: 'Jucati'
+  },
+  // CATENDE
+  {
+    inicio: 55400,
+    fim: 55404,
+    cidade: 'Catende'
+  },
+  // JAQUEIRA
+  {
+    inicio: 55409,
+    fim: 55409,
+    cidade: 'Jaqueira'
+  },
+  // ANGELIM
+  {
+    inicio: 55430,
+    fim: 55434,
+    cidade: 'Angelim'
+  },
+  // SÃO JOÃO
+  {
+    inicio: 55435,
+    fim: 55439,
+    cidade: 'São João'
+  },
+  // BELEM DE MARIA
+  {
+    inicio: 55440,
+    fim: 55449,
+    cidade: 'Belém de Maria'
+  },
+  // LAGOA DOS GATOS
+  {
+    inicio: 55450,
+    fim: 55459,
+    cidade: 'Lagoa dos Gatos'
+  },
+  // CUPIRA
+  {
+    inicio: 55460,
+    fim: 55469,
+    cidade: 'Cupira'
+  },
+  // PANELAS
+  {
+    inicio: 55470,
+    fim: 55479,
+    cidade: 'Panelas'
+  },
+  // ALTINHO
+  {
+    inicio: 55490,
+    fim: 55494,
+    cidade: 'Altinho'
+  },
+  // AGRESTINA
+  {
+    inicio: 55495,
+    fim: 55499,
+    cidade: 'Agrestina'
+  },
+  // ESCADA
+  {
+    inicio: 55500,
+    fim: 55509,
+    cidade: 'Escada'
+  },
+  // PRIMAVERA
+  {
+    inicio: 55510,
+    fim: 55514,
+    cidade: 'Primavera'
+  },
+  // AMARAJI
+  {
+    inicio: 55515,
+    fim: 55519,
+    cidade: 'Amaraji'
+  },
+  // RIBEIRÃO
+  {
+    inicio: 55520,
+    fim: 55524,
+    cidade: 'Ribeirão'
+  },
+  // CORTÊS
+  {
+    inicio: 55525,
+    fim: 55529,
+    cidade: 'Cortês'
+  },
+  // GAMELEIRA
+  {
+    inicio: 55530,
+    fim: 55534,
+    cidade: 'Gameleira'
+  },
+  // JOAQUIM NABUCO
+  {
+    inicio: 55535,
+    fim: 55539,
+    cidade: 'Joaquim Nabuco'
+  },
+  // PALMARES
+  {
+    inicio: 55540,
+    fim: 55549,
+    cidade: 'Palmares'
+  },
+  // ÁGUA PRETA
+  {
+    inicio: 55550,
+    fim: 55554,
+    cidade: 'Água Preta'
+  },
+  // XEXEU
+  {
+    inicio: 55555,
+    fim: 55559,
+    cidade: 'Xexeu'
+  },
+  // BARREIROS
+  {
+    inicio: 55560,
+    fim: 55564,
+    cidade: 'Barreiros'
+  },
+  // SÃO JOSÉ DA COROA GRANDE
+  {
+    inicio: 55565,
+    fim: 55569,
+    cidade: 'São José da Coroa Grande'
+  },
+  // RIO FORMOSO
+  {
+    inicio: 55570,
+    fim: 55577,
+    cidade: 'Rio Formoso'
+  },
+  // TAMANDARÉ
+  {
+    inicio: 55578,
+    fim: 55579,
+    cidade: 'Tamandaré'
+  },
+  // SIRINHAEM
+  {
+    inicio: 55580,
+    fim: 55589,
+    cidade: 'Sirinhaem'
+  },
+  // IPOJUCA
+  {
+    inicio: 55590,
+    fim: 55599,
+    cidade: 'Ipojuca'
+  },
+  // VITÓRIA DE SANTO ANTÃO
+  {
+    inicio: 55600,
+    fim: 55619,
+    cidade: 'Vitória de Santo Antão'
+  },
+  // GLÓRIA DO GOITA
+  {
+    inicio: 55620,
+    fim: 55629,
+    cidade: 'Glória do Goita'
+  },
+  // POMBOS
+  {
+    inicio: 55630,
+    fim: 55635,
+    cidade: 'Glória do Goita'
+  },
+  // CHÃ GRANDE
+  {
+    inicio: 55636,
+    fim: 55639,
+    cidade: 'Chã Grande'
+  },
+  // GRAVATÁ
+  {
+    inicio: 55640,
+    fim: 55649,
+    cidade: 'Gravatá'
+  },
+  // PASSIRA
+  {
+    inicio: 55650,
+    fim: 55654,
+    cidade: 'PASSIRA'
+  },
+  // CUMARU
+  {
+    inicio: 55655,
+    fim: 55659,
+    cidade: 'Cumaru'
+  },
+  // BEZERROS
+  {
+    inicio: 55660,
+    fim: 55664,
+    cidade: 'Bezerros'
+  },
+  // CAMOCIM DE SÃO FÉLIX
+  {
+    inicio: 55665,
+    fim: 55669,
+    cidade: 'Camocim de São Félix'
+  },
+  // SÃO JOAQUIM DO MONTE
+  {
+    inicio: 55670,
+    fim: 55674,
+    cidade: 'São Joaquim do Monte'
+  },
+  // BONITO
+  {
+    inicio: 55680,
+    fim: 55689,
+    cidade: 'Bonito'
+  },
+  // BARRA DE GUABIRABA
+  {
+    inicio: 55690,
+    fim: 55694,
+    cidade: 'Barra de Guabiraba'
+  },
+  // LIMOEIRO
+  {
+    inicio: 55700,
+    fim: 55714,
+    cidade: 'Limoeiro'
+  },
+  // FEIRA NOVA
+  {
+    inicio: 55715,
+    fim: 55719,
+    cidade: 'Feira Nova'
+  },
+  // JOÃO ALFREDO
+  {
+    inicio: 55720,
+    fim: 55729,
+    cidade: 'João Alfredo'
+  },
+  // BOM JARDIM
+  {
+    inicio: 55730,
+    fim: 55739,
+    cidade: 'Bom Jardim'
+  },
+  // MACHADOS
+  {
+    inicio: 55740,
+    fim: 55744,
+    cidade: 'Machados'
+  },
+  // OROBÓ
+  {
+    inicio: 55745,
+    fim: 55749,
+    cidade: 'Orobó'
+  },
+  // SURUBIM
+  {
+    inicio: 55750,
+    fim: 55754,
+    cidade: 'Surubim'
+  },
+  // CASINHAS
+  {
+    inicio: 55755,
+    fim: 55759,
+    cidade: 'Surubim'
+  },
+  // VERTENTE DO LERIO
+  {
+    inicio: 55760,
+    fim: 55764,
+    cidade: 'Vertente do Lerio'
+  },
+  // SANTA MARIA DO CAMBUCA
+  {
+    inicio: 55765,
+    fim: 55769,
+    cidade: 'Santa Maria ddo Cambuca'
+  },
+  // VERTENTES
+  {
+    inicio: 55770,
+    fim: 55779,
+    cidade: 'Vertentes'
+  },
+  // FREI MIGUELINHO
+  {
+    inicio: 55780,
+    fim: 55789,
+    cidade: 'Frei Miguelinho'
+  },
+  // TAQUARITINGA DO NORTE
+  {
+    inicio: 55790,
+    fim: 55799,
+    cidade: 'Taquaritinga do Norte'
+  },
+  // NAZARÉ DA MATA
+  {
+    inicio: 55800,
+    fim: 55804,
+    cidade: 'Nazaré da Mata'
+  },
+  // TRACUNHAÉM
+  {
+    inicio: 55805,
+    fim: 55809,
+    cidade: 'Tracunhaém'
+  },
+  // CARPINA
+  {
+    inicio: 55810,
+    fim: 55819,
+    cidade: 'Carpina'
+  },
+  // PAUDALHO
+  {
+    inicio: 55825,
+    fim: 55834,
+    cidade: 'Paudalho'
+  },
+  // CHÃ DE ALEGRIA
+  {
+    inicio: 55835,
+    fim: 55839,
+    cidade: 'Chã de Alegria'
+  },
+  // LAGOA DE ITAENGA
+  {
+    inicio: 55840,
+    fim: 55844,
+    cidade: 'Lagoa de Itaenga'
+  },
+  // BUENOS AIRES
+  {
+    inicio: 55845,
+    fim: 55849,
+    cidade: 'Buenos Aires'
+  },
+  // VICÊNCIA
+  {
+    inicio: 55850,
+    fim: 55859,
+    cidade: 'Vicência'
+  },
+  // SÃO VICENTE FERRER
+  {
+    inicio: 55860,
+    fim: 55864,
+    cidade: 'São Vicente Ferrer'
+  },
+  // MACAPARANA
+  {
+    inicio: 55865,
+    fim: 55869,
+    cidade: 'Macaparana'
+  },
+  // TIMBAÚBA
+  {
+    inicio: 55870,
+    fim: 55879,
+    cidade: 'Timbaúba'
+  },
+  // FERREIROS
+  {
+    inicio: 55880,
+    fim: 55889,
+    cidade: 'Ferreiros'
+  },
+  // ALIANÇA
+  {
+    inicio: 55890,
+    fim: 55899,
+    cidade: 'Aliança'
+  },
+  // GOIANA
+  {
+    inicio: 55900,
+    fim: 55919,
+    cidade: 'Goiana'
+  },
+  // ITAMBÉ
+  {
+    inicio: 55920,
+    fim: 55929,
+    cidade: 'Itambé'
+  },
+  // CAMUTANGA
+  {
+    inicio: 55930,
+    fim: 55939,
+    cidade: 'Camutanga'
+  },
+  // CONDADO
+  {
+    inicio: 55940,
+    fim: 55949,
+    cidade: 'Condado'
+  },
+  // ITAQUITINGA
+  {
+    inicio: 55950,
+    fim: 55999,
+    cidade: 'Itaquitinga'
+  },
+  // SALGUEIRO
+  {
+    inicio: 56000,
+    fim: 56119,
+    cidade: 'Salgueiro' 
+  },
+  // VERDEJANTE
+  {
+    inicio: 56120,
+    fim: 56129,
+    cidade: 'Verdejante' 
+  },
+  // CARNAUBEIRA DA PENHA
+  {
+    inicio: 56420,
+    fim: 56429,
+    cidade: 'Carnaubeira da Penha' 
+  },
+  // TACARATU
+  {
+    inicio: 56480,
+    fim: 56499,
+    cidade: 'Tacaratu' 
+  },
+  // ARCOVERDE
+  {
+    inicio: 56500,
+    fim: 56519,
+    cidade: 'Arcoverde' 
+  },
+  // BUIQUE
+  {
+    inicio: 56520,
+    fim: 56539,
+    cidade: 'Buique' 
+  },
+  // TUPANATINGA
+  {
+    inicio: 56540,
+    fim: 56549,
+    cidade: 'Tupanatinga' 
+  },
+  // ITAIBA
+  {
+    inicio: 56550,
+    fim: 56559,
+    cidade: 'Itaiba' 
+  },
+  // INAJA
+  {
+    inicio: 56560,
+    fim: 56564,
+    cidade: 'Inaja' 
+  },
+  // MANARI
+  {
+    inicio: 56565,
+    fim: 56579,
+    cidade: 'Manari' 
+  },
+  // IBIMIRIM
+  {
+    inicio: 56580,
+    fim: 56599,
+    cidade: 'Ibimirim' 
+  },
+  // SERTÂNIA
+  {
+    inicio: 56600,
+    fim: 56639,
+    cidade: 'Sertânia' 
+  },
+  // CUSTÓDIA
+  {
+    inicio: 56640,
+    fim: 56669,
+    cidade: 'Custódia' 
+  },
+  // BETÂNIA
+  {
+    inicio: 56670,
+    fim: 56699,
+    cidade: 'Betânia' 
+  },
+  // SÃO JOSÉ DO EGITO
+  {
+    inicio: 56700,
+    fim: 56719,
+    cidade: 'São José do Egito' 
+  },
+  // ITAPETIM
+  {
+    inicio: 56720,
+    fim: 56739,
+    cidade: 'Itapetim' 
+  },
+  // BREJINHO
+  {
+    inicio: 56740,
+    fim: 56749,
+    cidade: 'Brejinho' 
+  },
+  // SANTA TEREZINHA
+  {
+    inicio: 56750,
+    fim: 56759,
+    cidade: 'Santa Terezinha' 
+  },
+  // TUPARETAMA
+  {
+    inicio: 56760,
+    fim: 56779,
+    cidade: 'Tuparetama' 
+  },
+  // TABIRA
+  {
+    inicio: 56780,
+    fim: 56794,
+    cidade: 'Tubira' 
+  },
+  // SOLIDÃO
+  {
+    inicio: 56795,
+    fim: 56799,
+    cidade: 'Solidão' 
+  },
+  // AFOGADOS DA INGAZEIRA
+  {
+    inicio: 56800,
+    fim: 56819,
+    cidade: 'Afogados da Ingazeira' 
+  },
+  // CARNAIBA
+  {
+    inicio: 56820,
+    fim: 56827,
+    cidade: 'Carnaiba' 
+  },
+  // QUIXABA
+  {
+    inicio: 56828,
+    fim: 56829,
+    cidade: 'Quixaba' 
+  },
+  // INGAZEIRA
+  {
+    inicio: 56830,
+    fim: 56839,
+    cidade: 'Ingazeira' 
+  },
+  // IGUARACI
+  {
+    inicio: 56840,
+    fim: 56849,
+    cidade: 'Iguaraci' 
+  },
+  // FLORES
+  {
+    inicio: 56850,
+    fim: 56869,
+    cidade: 'Flores' 
+  },
+  // TRIUNFO
+  {
+    inicio: 56870,
+    fim: 56894,
+    cidade: 'Triunfo' 
+  },
+  // SANTA CRUZ DA BAIXA VERDE
+  {
+    inicio: 56895,
+    fim: 56899,
+    cidade: 'Santa Cruz da Baixa Verde' 
+  },
+  // SERRA TALHADA
+  {
+    inicio: 56900,
+    fim: 56929,
+    cidade: 'Serra Talhada' 
+  },
+  // CALUMBI
+  {
+    inicio: 56930,
+    fim: 56949,
+    cidade: 'Calumbi' 
+  },
+  // SÃO JOSÉ DO BELMONTE
+  {
+    inicio: 56950,
+    fim: 56979,
+    cidade: 'São José do Belmonte' 
+  },
+  // MIRANDIBA
+  {
+    inicio: 56980,
+    fim: 56999,
+    cidade: 'MIRANDIBA' 
+  },
+  // JOÃO PESSOA
+  {
+    inicio: 58000,
+    fim: 58099,
+    cidade: 'João Pessoa' 
+  },
+  // CABEDELO
+  {
+    inicio: 58100,
+    fim: 58109,
+    cidade: 'Cabedelo' 
+  },
+  // BAYEUX
+  {
+    inicio: 58110,
+    fim: 58114,
+    cidade: 'Bayeux' 
+  },
+  // CONDE
+  {
+    inicio: 58322,
+    fim: 58323,
+    cidade: 'Conde' 
+  },
+  // NATUBA
+  {
+    inicio: 58494,
+    fim: 58496,
+    cidade: 'Natuba' 
+  },
+  // UMBUZEIRO
+  {
+    inicio: 58497,
+    fim: 58499,
+    cidade: 'Umbuzeiro' 
+  },
+  // MONTEIRO
+  {
+    inicio: 58500,
+    fim: 58509,
+    cidade: 'Monteiro' 
+  },
+  // SUME
+  {
+    inicio: 58540,
+    fim: 58547,
+    cidade: 'Sume' 
+  },
+  // PRATA
+  {
+    inicio: 58550,
+    fim: 58559,
+    cidade: 'Prata' 
+  },
+  // OURO VELHO
+  {
+    inicio: 58560,
+    fim: 58569,
+    cidade: 'Ouro Velho' 
+  },
+  // TAPEROA
+  {
+    inicio: 58680,
+    fim: 58684,
+    cidade: 'Taperoa' 
+  },
+  // LIVRAMENTO
+  {
+    inicio: 58690,
+    fim: 58694,
+    cidade: 'Livramento' 
+  },
+  // DESTERRO
+  {
+    inicio: 58695,
+    fim: 58697,
+    cidade: 'Desterro' 
+  },
+  // CACIMBAS
+  {
+    inicio: 58698,
+    fim: 58699,
+    cidade: 'Cacimbas' 
+  },
+  // TEIXEIRA
+  {
+    inicio: 58735,
+    fim: 58736,
+    cidade: 'Teixeira' 
+  },
+  // MATUREIA
+  {
+    inicio: 58737,
+    fim: 58739,
+    cidade: 'Matureia' 
+  },
+  // IMACULADA
+  {
+    inicio: 58745,
+    fim: 58747,
+    cidade: 'Imaculada' 
+  },
+  // ÁGUA BRANCA
+  {
+    inicio: 58748,
+    fim: 58749,
+    cidade: 'Água Branca' 
+  },
+  // JURU
+  {
+    inicio: 58750,
+    fim: 58752,
+    cidade: 'Juru' 
+  },
+  // TAVARES
+  {
+    inicio: 58753,
+    fim: 58754,
+    cidade: 'Tavares' 
+  },
+  // PRINCESA ISABEL
+  {
+    inicio: 58755,
+    fim: 58757,
+    cidade: 'Princesa Isabel' 
+  },
+  // SÃO JOSÉ DE PRINCESA
+  {
+    inicio: 58758,
+    fim: 58759,
+    cidade: 'São José de Princesa' 
+  },
+  // JERICO
+  {
+    inicio: 58830,
+    fim: 58831,
+    cidade: 'Jerico' 
+  },
+  // CONCEIÇÃO
+  {
+    inicio: 58970,
+    fim: 58977,
+    cidade: 'Conceição' 
+  },
+  // MANAIRA
+  {
+    inicio: 58995,
+    fim: 58996,
+    cidade: 'Manaira' 
+  },
+  // NATAL
+  {
+    inicio: 59000,
+    fim: 59139,
+    cidade: 'Natal' 
+  },
+  // PARNAMIRIM
+  {
+    inicio: 59140,
+    fim: 59161,
+    cidade: 'Parnamirim' 
+  },
+  // SÃO JOSÉ DO MIPIBU
+  {
+    inicio: 59162,
+    fim: 59163,
+    cidade: 'São José do Mipibu' 
+  },
+  // NISIA FLORESTA
+  {
+    inicio: 59164,
+    fim: 59167,
+    cidade: 'Nisia Floresta' 
+  },
+  // AREZ
+  {
+    inicio: 59170,
+    fim: 59172,
+    cidade: 'Arez' 
+  },
+  // GOIANINHA
+  {
+    inicio: 59173,
+    fim: 59177,
+    cidade: 'Goianinha' 
+  },
+  // TIBAU DO SUL
+  {
+    inicio: 59178,
+    fim: 59179,
+    cidade: 'Tibau do Sul' 
+  },
+  // ESPIRITO SANTO
+  {
+    inicio: 59180,
+    fim: 59181,
+    cidade: 'Espirito Santo' 
+  },
+  // MONTE ALEGRE
+  {
+    inicio: 59182,
+    fim: 59183,
+    cidade: 'Monte Alegre' 
+  },
+  // VERA CRUZ
+  {
+    inicio: 59184,
+    fim: 59184,
+    cidade: 'Vera Cruz' 
+  },
+  // CANGUARETAMA
+  {
+    inicio: 59190,
+    fim: 59191,
+    cidade: 'Canguaretama' 
+  },
+  // VILA FLOR
+  {
+    inicio: 59192,
+    fim: 59193,
+    cidade: 'Vila Flor' 
+  },
+  // BAIA FORMOSA
+  {
+    inicio: 59194,
+    fim: 59195,
+    cidade: 'Baia Formosa' 
+  },
+  // PEDRO VELHO
+  {
+    inicio: 59196,
+    fim: 59197,
+    cidade: 'Pedro Velho' 
+  },
+  // MONTANHAS
+  {
+    inicio: 59196,
+    fim: 59197,
+    cidade: 'Montanhas' 
+  },
+  // NOVA CRUZ
+  {
+    inicio: 59215,
+    fim: 59216,
+    cidade: 'Nova Cruz' 
+  },
+  // TANGARA
+  {
+    inicio: 59240,
+    fim: 59243,
+    cidade: 'Tangara' 
+  },
+  // SERRA CAIADA
+  {
+    inicio: 59245,
+    fim: 59246,
+    cidade: 'Serra Caiada' 
+  },
+  // LAGOA SALGADA
+  {
+    inicio: 59247,
+    fim: 59249,
+    cidade: 'Lagoa Salgada' 
+  },
+  // SANTO ANTÔNIO
+  {
+    inicio: 59255,
+    fim: 59257,
+    cidade: 'Santo Antônio' 
+  },
+  // PASSAGEM
+  {
+    inicio: 59259,
+    fim: 59259,
+    cidade: 'Passagem' 
+  },
+  // JANUÁRIO CICCO
+  {
+    inicio: 59260,
+    fim: 59269,
+    cidade: 'Januário Cicco' 
+  },
+  // BOM JESUS
+  {
+    inicio: 59270,
+    fim: 59274,
+    cidade: 'Bom Jesus' 
+  },
+  // MACAIBA
+  {
+    inicio: 59280,
+    fim: 59289,
+    cidade: 'Macaiba' 
+  },
+  // SÃO GONÇALO DO AMARANTE
+  {
+    inicio: 59290,
+    fim: 59299,
+    cidade: 'São Gonçalo do Amarante' 
+  },
+  // JUCURUTU
+  {
+    inicio: 59330,
+    fim: 59334,
+    cidade: 'Jucurutu' 
+  },
+  // FLORÂNIA
+  {
+    inicio: 59335,
+    fim: 59337,
+    cidade: 'Florânia' 
+  },
+  // TENENTE LAURENTINO
+  {
+    inicio: 59338,
+    fim: 59339,
+    cidade: 'Tenente Laurentino' 
+  },
+  // LAGOA NOVA
+  {
+    inicio: 59390,
+    fim: 59394,
+    cidade: 'Lagoa Nova' 
+  },
+  // CERRO CORÁ
+  {
+    inicio: 59395,
+    fim: 59399,
+    cidade: 'Cerro Corá' 
+  },
+  // SÃO PAULO DO POTENGI
+  {
+    inicio: 59460,
+    fim: 59463,
+    cidade: 'São Paulo do Potengi' 
+  },
+  // RIACHUELO
+  {
+    inicio: 59470,
+    fim: 59479,
+    cidade: 'Richuelo' 
+  },
+  // SÃO PEDRO
+  {
+    inicio: 59480,
+    fim: 59489,
+    cidade: 'São Pedro' 
+  },
+  // MACAU
+  {
+    inicio: 59500,
+    fim: 59503,
+    cidade: 'Macau' 
+  },
+  // PENDÊNCIAS
+  {
+    inicio: 59504,
+    fim: 59506,
+    cidade: 'Pendências' 
+  },
+  // ALTO DO RODRIGUES
+  {
+    inicio: 59507,
+    fim: 59507,
+    cidade: 'Alto do Rodrigues' 
+  },
+  // IPANGUAÇU
+  {
+    inicio: 59508,
+    fim: 59509,
+    cidade: 'Ipanguaçu' 
+  },
+  // AFONSO BEZERRA
+  {
+    inicio: 59510,
+    fim: 59512,
+    cidade: 'Afonso Bezerra' 
+  },
+  // ITAJA
+  {
+    inicio: 59513,
+    fim: 59514,
+    cidade: 'Itaja' 
+  },
+  // ANGICOS
+  {
+    inicio: 59515,
+    fim: 59516,
+    cidade: 'Angicos' 
+  },
+  // FERNANDO PEDROZA
+  {
+    inicio: 59517,
+    fim: 59517,
+    cidade: 'Fernando Pedroza' 
+  },
+  // SANTANA DO MATOS
+  {
+    inicio: 59520,
+    fim: 59527,
+    cidade: 'Santana do Matos' 
+  },
+  // PEDRO AVELINO
+  {
+    inicio: 59530,
+    fim: 59534,
+    cidade: 'Pedro Avelino' 
+  },
+  // LAJES
+  {
+    inicio: 59535,
+    fim: 59539,
+    cidade: 'Lajes' 
+  },
+  // CAIÇARA DO RIO DO VENTO
+  {
+    inicio: 59540,
+    fim: 59543,
+    cidade: 'Caiçara do Rio do Vento' 
+  },
+  // PEDRA PRETA
+  {
+    inicio: 59547,
+    fim: 59549,
+    cidade: 'Pedra Preta' 
+  },
+  // JOÃO CÂMARA
+  {
+    inicio: 59550,
+    fim: 59554,
+    cidade: 'João Câmara' 
+  },
+  // BENTO FERNANDES
+  {
+    inicio: 59555,
+    fim: 59559,
+    cidade: 'Bento Fernandes' 
+  },
+  // CEARÁ-MIRIM
+  {
+    inicio: 59570,
+    fim: 59574,
+    cidade: 'Ceará-Mirim' 
+  },
+  // EXTREMOZ
+  {
+    inicio: 59575,
+    fim: 59577,
+    cidade: 'Extremoz' 
+  },
+  // RIO DO FOGO
+  {
+    inicio: 59578,
+    fim: 59579,
+    cidade: 'Rio do Fogo' 
+  },
+  // MAXARANGUAPE
+  {
+    inicio: 59580,
+    fim: 59581,
+    cidade: 'Maxaranguape' 
+  },
+  // PUREZA
+  {
+    inicio: 59582,
+    fim: 59583,
+    cidade: 'Pureza' 
+  },
+  // TOUROS
+  {
+    inicio: 59584,
+    fim: 59584,
+    cidade: 'Touros' 
+  },
+  // SÃO MIGUEL DO GOSTOSO
+  {
+    inicio: 59585,
+    fim: 59585,
+    cidade: 'São Miguel do Gostoso' 
+  },
+  // PARAZINHO
+  {
+    inicio: 59586,
+    fim: 59587,
+    cidade: 'Parazinho' 
+  },
+  // PEDRA GRANDE
+  {
+    inicio: 59588,
+    fim: 59589,
+    cidade: 'Pedra Grande' 
+  },
+  // SÃO BENTO DO NORTE
+  {
+    inicio: 59590,
+    fim: 59591,
+    cidade: 'São Bento do Norte' 
+  },
+  // CAIÇARA DO NORTE
+  {
+    inicio: 59592,
+    fim: 59593,
+    cidade: 'Caiçara do Norte' 
+  },
+  // JANDAÍRA
+  {
+    inicio: 59594,
+    fim: 59595,
+    cidade: 'Jandaíra' 
+  },
+  // GUAMARE
+  {
+    inicio: 59598,
+    fim: 59599,
+    cidade: 'Guamare' 
+  },
+  // MOSSORÓ
+  {
+    inicio: 59600,
+    fim: 59649,
+    cidade: 'Mossoró' 
+  },
+  // AÇU
+  {
+    inicio: 59650,
+    fim: 59654,
+    cidade: 'Açu' 
+  },
+  // AREIA BRANCA
+  {
+    inicio: 59655,
+    fim: 59659,
+    cidade: 'Areia Branca' 
+  },
+  // PARAU
+  {
+    inicio: 59660,
+    fim: 59662,
+    cidade: 'Parau' 
+  },
+  // SERRA DO MEL
+  {
+    inicio: 59663,
+    fim: 59664,
+    cidade: 'Serra do Mel' 
+  },
+  // CARNAUBAIS
+  {
+    inicio: 59665,
+    fim: 59667,
+    cidade: 'Carnaubais' 
+  },
+  // PORTO DO MANGUE
+  {
+    inicio: 59668,
+    fim: 59669,
+    cidade: 'Porto do Mangue' 
+  },
+  // UPANEMA
+  {
+    inicio: 59670,
+    fim: 59674,
+    cidade: 'Upanema' 
+  },
+  // GROSSOS
+  {
+    inicio: 59675,
+    fim: 59677,
+    cidade: 'Grossos' 
+  },
+  // TIBAU
+  {
+    inicio: 59678,
+    fim: 59679,
+    cidade: 'Tibau' 
+  },
+  // CAMPO GRANDE
+  {
+    inicio: 59680,
+    fim: 59684,
+    cidade: 'Campo Grande' 
+  },
+  // TRIUNFO POTIGUAR
+  {
+    inicio: 59685,
+    fim: 59689,
+    cidade: 'Triunfo Potiguar' 
+  },
+  // BARAUNA
+  {
+    inicio: 59695,
+    fim: 59699,
+    cidade: 'Barauna' 
+  },
+  // CARAUBAS
+  {
+    inicio: 59780,
+    fim: 59789,
+    cidade: 'Caraubas' 
+  },
+  // GOVERNADOR DIX-SEPT ROSADO
+  {
+    inicio: 59790,
+    fim: 59794,
+    cidade: 'Governador Dix-Sept Rosado' 
+  },
+  // SANTA RITA
+  {
+    inicio: 58300,
+    fim: 58304,
+    cidade: 'Santa Rita' 
+  },
+  // ALHANDRA
+  {
+    inicio: 58320,
+    fim: 58321,
+    cidade: 'Alhandra' 
+  },
+  // CAAPORÃ
+  {
+    inicio: 58326,
+    fim: 58327,
+    cidade: 'Caaporã' 
+  },
+  // JURIPIRANGA
+  {
+    inicio: 58330,
+    fim: 58333,
+    cidade: 'Juripiranga' 
+  },
+  // PEDRAS DE FOGO
+  {
+    inicio: 58328,
+    fim: 58329,
+    cidade: 'Pedras de Fogo' 
+  },
+  // ITABAIANA
+  {
+    inicio: 58360,
+    fim: 58369,
+    cidade: 'Itabaiana' 
+  },
+  // PILAR
+  {
+    inicio: 58338,
+    fim: 58338,
+    cidade: 'Pilar' 
+  },
+  // SAPE
+  {
+    inicio: 58340,
+    fim: 58341,
+    cidade: 'Sape' 
+  },
+  // MARI
+  {
+    inicio: 58345,
+    fim: 58347,
+    cidade: 'Mari' 
+  },
+  // CALDAS BRANDÃO
+  {
+    inicio: 58350,
+    fim: 58353,
+    cidade: 'Caldas Brandão' 
+  },
+  // SALGADOS DE SÃO FÉLIX
+  {
+    inicio: 58370,
+    fim: 58373,
+    cidade: 'Salgados de São Félix' 
+  },
+  // LUCENA
+  {
+    inicio: 58315,
+    fim: 58319,
+    cidade: 'Lucena' 
+  },
+  // MAMANGUAPE
+  {
+    inicio: 58280,
+    fim: 58286,
+    cidade: 'Mamanguape' 
+  },
+  // RIO TINTO
+  {
+    inicio: 58297,
+    fim: 58299,
+    cidade: 'Rio Tinto' 
+  },
+  // MARCAÇÃO
+  {
+    inicio: 58294,
+    fim: 58294,
+    cidade: 'Marcação' 
+  },
+  // BAIA DA TRAIÇÃO
+  {
+    inicio: 58295,
+    fim: 58296,
+    cidade: 'Baia da Traição' 
+  },
+  // ITAPOROROCA
+  {
+    inicio: 58275,
+    fim: 58277,
+    cidade: 'Itapororoca' 
+  },
+  // ARACAGI
+  {
+    inicio: 58270,
+    fim: 58272,
+    cidade: 'Aracagi' 
+  },
+  // CRUZ DO ESPIRITO SANTO
+  {
+    inicio: 58337,
+    fim: 58337,
+    cidade: 'Cruz do Espirito Santo' 
+  },
+  // SOBRADO
+  {
+    inicio: 58342,
+    fim: 58344,
+    cidade: 'Sobrado' 
+  },
+  // RIACHÃO DO POÇO
+  {
+    inicio: 58348,
+    fim: 58349,
+    cidade: 'Riachão do Poço' 
+  },
+  // SÃO MIGUEL DE TAIPU
+  {
+    inicio: 58348,
+    fim: 58349,
+    cidade: 'São Miguel de Taipu' 
+  },
+  // CAPIM
+  {
+    inicio: 58287,
+    fim: 58288,
+    cidade: 'Capim' 
+  },
+  // CUITE DE MAMANGUAPE
+  {
+    inicio: 58289,
+    fim: 58290,
+    cidade: 'Cuite de Mamanguape' 
+  },
+  // CURRAL DE CIMA
+  {
+    inicio: 58291,
+    fim: 58291,
+    cidade: 'Curral de Cima' 
+  },
+  // JACARAÚ
+  {
+    inicio: 58278,
+    fim: 58279,
+    cidade: 'Jacaraú' 
+  },
+  // PEDRO REGIS
+  {
+    inicio: 58273,
+    fim: 58274,
+    cidade: 'Pedro Regis' 
+  },
+  // LAGOA DE DENTRO
+  {
+    inicio: 58250,
+    fim: 58252,
+    cidade: 'Lagoa de Dentro' 
+  },
+  // SERRA DA RAIZ
+  {
+    inicio: 58260,
+    fim: 58264,
+    cidade: 'Serra da Raiz' 
+  },
+  // MATARACA
+  {
+    inicio: 58292,
+    fim: 58293,
+    cidade: 'Mataraca' 
+  },
+  // DUAS ESTRADAS
+  {
+    inicio: 58265,
+    fim: 58267,
+    cidade: 'Duas Estradas' 
+  },
+  // SÃO JOSÉ DOS RAMOS
+  {
+    inicio: 58339,
+    fim: 58339,
+    cidade: 'São José dos Ramos' 
+  },
+  // GURINHEM
+  {
+    inicio: 58356,
+    fim: 58359,
+    cidade: 'Gurinhem' 
+  },
+  // MULUNGU
+  {
+    inicio: 58354,
+    fim: 58355,
+    cidade: 'Mulungu' 
+  }
+
+];
+
+$("#VerificarCEP").on('click', function(e) {
+  var campo = $('#cep');
+  var check = false;
+  if (campo.val().length < 8) return;
+  var url = 'https://viacep.com.br/ws/${cep}/json/'.replace('${cep}', campo.val());
+  
+  $.getJSON(url, function (retorno) {
+    if (retorno.erro) {
+      $(".success, .infoe").hide();
+      $(".erro").show();
+    } else {
+      var ini = retorno.cep.substring(0, 5);
+      var t = $.grep(abrange, function(cep, i){
+        if(ini >= cep.inicio && ini <= cep.fim) {
+          check = true;
+        }
+      });
+      
+      if (check) {
+        $(".erro, .infoe").hide();
+        $(".success").show();
+      } else {
+        $(".erro, .success").hide();
+        $(".infoe").show();
+      }
+    }
+  });
+});    
+    
+</script>
