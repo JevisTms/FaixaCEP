@@ -50,11 +50,10 @@
 
     input#VerificarCEP{
         padding: 0.500rem 0rem;
-        font-family: var(--font_family);
         font-size: 0.875rem;
         font-weight: 500;
-        color: var(--color_primary_text) !important;
-        background-color: var(--color_primary);
+        color: white;
+        background-color: #011445;
         border-radius: 5px;
         transition: ease-out 0.2s;
         max-width: 100px;
@@ -114,11 +113,10 @@
 
     input#VerificarCEP{
         padding: 0.500rem 0rem;
-        font-family: var(--font_family);
         font-size: 0.775rem;
         font-weight: 500;
-        color: var(--color_primary_text) !important;
-        background-color: var(--color_primary);
+        color: white;
+        background-color: #011445;
         border-radius: 5px;
         transition: ease-out 0.2s;
         max-width: 100px;
